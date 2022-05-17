@@ -214,11 +214,17 @@ added.
 A [=string=] |string| is a <dfn>valid basic name</dfn> if it does not contain
 [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
 
-<p class="note">This concept is used to validate [=attribute=] [=Attr/local names=] and
-[=Attr/qualified names=], as well as both [=Element/namespace prefix|element=] and
-[=Attr/namespace prefix|attribute=] namespace prefixes, in the cases where elements and attributes
-are constructed with DOM APIs. Note that the prefixes additionally cannot contain U+003A (:) by
-construction since they always result from the [=validate and extract=] algorithm.
+<div class="note">
+ <p>This concept is used to validate [=attribute=] [=Attr/local names=] and
+ [=Attr/qualified names=], as well as both [=Element/namespace prefix|element=] and
+ [=Attr/namespace prefix|attribute=] namespace prefixes, in the cases where elements and attributes
+ are constructed with DOM APIs. Note that the prefixes additionally cannot contain U+003A (:) by
+ construction since they always result from the [=validate and extract=] algorithm.
+
+ <p>Note that this means [=attribute=] [=Attr/local names=] for attributes constructed with DOM APIs
+ can contain U+003D (=) in positions beyond the initial character, which is not possible when using
+ the HTML parser.
+</div>
 
 A [=string=] |string| is a <dfn>valid element local name</dfn> if it matches the following
 <code>[=ValidElementLocalName=]</code>
