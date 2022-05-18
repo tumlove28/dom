@@ -5171,7 +5171,7 @@ method steps are to return the <a>list of elements with class names <var>classNa
   <a for=/>node</a> whose
   <a for=ProcessingInstruction>target</a> is <var>target</var> and
   <a for=CharacterData>data</a> is <var>data</var>.
-  If <var>target</var> is not a <a>valid basic name</a> an
+  If <var>target</var> does not match the <code>[=XML/Name=]</code> production an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
   If <var>data</var> contains "<code>?></code>" an
   "{{InvalidCharacterError!!exception}}" {{DOMException}} will be thrown.
