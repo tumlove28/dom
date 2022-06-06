@@ -211,22 +211,13 @@ added.
 
 <h3 id=name-validation oldids=namespaces>Name validation</h3>
 
-A [=string=] |string| is a <dfn>valid basic name</dfn> if it does not contain
-[=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
+A [=string=] is a <dfn>valid namespace prefix</dfn> if it does not contain [=ASCII whitespace=],
+U+0000 NULL, U+002F (/), or U+003E (>).
 
-<div class="note">
- <p>This concept is used to validate [=attribute=] [=Attr/local names=] and
- [=Attr/qualified names=], as well as both [=Element/namespace prefix|element=] and
- [=Attr/namespace prefix|attribute=] namespace prefixes, in the cases where elements and attributes
- are constructed with DOM APIs. Note that the prefixes additionally cannot contain U+003A (:) by
- construction since they always result from the [=validate and extract=] algorithm.
+A [=string=] is a <dfn>valid attribute local name</dfn> if it does not contain [=ASCII whitespace=],
+U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
 
- <p>Note that this means [=attribute=] [=Attr/local names=] for attributes constructed with DOM APIs
- can contain U+003D (=) in positions beyond the initial character, which is not possible when using
- the HTML parser.
-</div>
-
-A [=string=] |string| is a <dfn>valid element local name</dfn> if it matches the following
+A [=string=] is a <dfn>valid element local name</dfn> if it matches the following
 <code>[=ValidElementLocalName=]</code>
 <a href="https://www.w3.org/TR/xml/#sec-notation">EBNF production</a>. The notation used here is as
 defined in <cite>XML</cite>. [[!XML]]
@@ -234,7 +225,7 @@ defined in <cite>XML</cite>. [[!XML]]
 <pre class=lang-ebnf>
 <dfn>ValidElementLocalName</dfn>         ::= <a>HTMLParserCompatibleName</a> | <a>BeyondHTMLParserName</a>
 
-<dfn>HTMLParserCompatibleName</dfn>      ::= [a-zA-Z] [^#x00#x09#x0A#0xCx0D#x20/>]*
+<dfn>HTMLParserCompatibleName</dfn>      ::= [a-zA-Z] [^#x00#x09#x0A#0x0Cx0D#x20/>]*
 
 <dfn>BeyondHTMLParserName</dfn>          ::= <a>BeyondHTMLParserNameStartChar</a> (<a>BeyondHTMLParserNameChar</a>)*
 <dfn>BeyondHTMLParserNameStartChar</dfn> ::= ":" | "_" | [#x80-#x10FFFF]
@@ -246,8 +237,19 @@ constructed by DOM APIs. The intention is to allow any name that is possible to 
 HTML parser, plus some additional possibilities. For those additional possibilities, the ASCII range
 is restricted for historical reasons, but beyond ASCII anything is allowed.
 
+<div class="note">
+ An equivalent EBNF is the following:
 
-<p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>:
+ <pre class=lang-ebnf>
+ <a>ValidElementLocalName</a>          ::= <a>ValidElementLocalNameStartChar</a> (<a>ValidElementLocalNameChar</a>)*
+ <dfn>ValidElementLocalNameStartChar</dfn> ::= [a-zA-Z] | ":" | "_" | [#x80-#x10FFFF]
+ <dfn>ValidElementLocalNameChar</dfn>      ::= [^#x00#x09#x0A#0x0Cx0D#x20/>]
+ </pre>
+</div>
+
+
+<p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
+<var>context</var>:
 
 <ol>
  <li><p>If <var>namespace</var> is the empty string, then set it to null.
@@ -259,11 +261,14 @@ is restricted for historical reasons, but beyond ASCII anything is allowed.
  <li><p>If <var>qualifiedName</var> contains a U+003A (:), then <a>strictly split</a> the string on
  it and set <var>prefix</var> to the part before and <var>localName</var> to the part after.
 
- <li><p>If <var>prefix</var> is not a [=valid basic name=], then [=throw=] an
+ <li><p>If <var>prefix</var> is not a [=valid namespace prefix=], then [=throw=] an
  "{{InvalidCharacterError}}" {{DOMException}}.
 
- <li><p>If <var>localName</var> is not a [=valid element local name=], then [=throw=] an
- "{{InvalidCharacterError}}" {{DOMException}}.
+ <li><p>If <var>context</var> is "<code>attribute</code>" and <var>localName</var> is not a
+ [=valid attribute local name=], then [=throw=] an "{{InvalidCharacterError}}" {{DOMException}}.
+
+ <li><p>If <var>context</var> is "<code>element</code>" and <var>localName</var> is not a
+ [=valid element local name=], then [=throw=] an "{{InvalidCharacterError}}" {{DOMException}}.
 
  <li><p>If <var>prefix</var> is non-null and <var>namespace</var> is null, then <a>throw</a> a
  "{{NamespaceError!!exception}}" {{DOMException}}.
@@ -5214,7 +5219,8 @@ method steps are:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ [=validate and extract|validating and extracting=] <var>namespace</var> and
+ <var>qualifiedName</var> given "<code>element</code>".
 
  <li><p>Let <var>is</var> be null.
 
@@ -5393,7 +5399,7 @@ these steps:
 steps are:
 
 <ol>
- <li><p>If <var>localName</var> is not a <a>valid basic name</a>, then
+ <li><p>If <var>localName</var> is not a <a>valid attribute local name</a>, then
  <a>throw</a> an "{{InvalidCharacterError!!exception}}" {{DOMException}}.
 
  <li>If <a>this</a> is an <a>HTML document</a>, then set <var>localName</var> to
@@ -5409,7 +5415,8 @@ method steps are:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ [=validate and extract|validating and extracting=] <var>namespace</var> and
+ <var>qualifiedName</var> given "<code>attribute</code>".
 
  <li><p>Return a new <a>attribute</a> whose <a for=Attr>namespace</a> is <var>namespace</var>,
  <a for=Attr>namespace prefix</a> is <var>prefix</var>, <a for=Attr>local name</a> is
@@ -6606,8 +6613,14 @@ method steps are:
 method steps are:
 
 <ol>
- <li><p>If <var>qualifiedName</var> is not a <a>valid basic name</a>, then <a>throw</a> an
- "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <li>
+  <p>If <var>qualifiedName</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+  <p class="note" id="node-setAttribute-qualifiedName">Despite the parameter naming,
+  <var>qualifiedName</var> is only used as a [=Attr/qualified name=] if an [=attribute=] already
+  exists with that qualified name. Otherwise, it is used as the [=Attr/local name=] of the new
+  attribute. We only need to validate it for the latter case.
 
  <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
  <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
@@ -6632,7 +6645,8 @@ method steps are:
 
 <ol>
  <li><p>Let <var>namespace</var>, <var>prefix</var>, and <var>localName</var> be the result of
- passing <var>namespace</var> and <var>qualifiedName</var> to <a>validate and extract</a>.
+ [=validate and extract|validating and extracting=] <var>namespace</var> and
+ <var>qualifiedName</var> given "<code>element</code>".
 
  <li><p><a>Set an attribute value</a> for <a>this</a> using <var>localName</var>, <var>value</var>,
  and also <var>prefix</var> and <var>namespace</var>.
@@ -6665,8 +6679,12 @@ steps are:
 method steps are:
 
 <ol>
- <li><p>If <var>qualifiedName</var> is not a <a>valid basic name</a>, then <a>throw</a> an
- "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+ <li>
+  <p>If <var>qualifiedName</var> is not a <a>valid attribute local name</a>, then <a>throw</a> an
+  "{{InvalidCharacterError!!exception}}" {{DOMException}}.
+
+  <p class="note">See <a href="#node-setAttribute-qualifiedName">the discussion above</a> about why
+  we validate it as a local name, instead of a qualified name.
 
  <li><p>If <a>this</a> is in the <a>HTML namespace</a> and its <a for=Node>node document</a> is an
  <a>HTML document</a>, then set <var>qualifiedName</var> to <var>qualifiedName</var> in
