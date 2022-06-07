@@ -211,19 +211,21 @@ added.
 
 <h3 id=name-validation oldids=namespaces>Name validation</h3>
 
-A [=string=] is a <dfn>valid namespace prefix</dfn> if its [=string/length=] is at least 1 and it
+<p>A [=string=] is a <dfn>valid namespace prefix</dfn> if its [=string/length=] is at least 1 and it
 does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
 
-A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1 and
-it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
+<p>A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1
+and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
 
-A [=string=] is a <dfn>valid element local name</dfn> if all of the following conditions hold:
+<p>A [=string=] is a <dfn>valid element local name</dfn> if all of the following conditions hold:
 
-* its [=string/length=] is at least 1;
-* its first [=code point=] is an [=ASCII alpha=], U+003A (:), U+005F (_), or in the range U+0080 to
-  U+10FFFF inclusive; and
-* its subsequent [=code points=], if any, are not [=ASCII whitespace=], U+0000 NULL, U+002F (/), or
-  U+003E (>).
+<ul class=brief>
+ <li>its [=string/length=] is at least 1;
+ <li>its first [=code point=] is an [=ASCII alpha=], U+003A (:), U+005F (_), or in the range U+0080
+ to U+10FFFF, inclusive; and
+ <li>its subsequent [=code points=], if any, are not [=ASCII whitespace=], U+0000 NULL, U+002F (/),
+ or U+003E (>).
+</ul>
 
 <p class="note">This concept is used to validate [=/element=] [=Element/local names=], when
 constructed by DOM APIs. The intention is to allow any name that is possible to construct using the
