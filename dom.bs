@@ -223,7 +223,7 @@ and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=
  <li><p>If |name|'s [=string/length=] is 0, then return false.
 
  <li>
-  <p>If |name|'s first [=code point=] is an [=ASCII alpha=], then:
+  <p>If |name|'s 0th [=code point=] is an [=ASCII alpha=], then:
 
   <ol>
    <li><p>If |name| contains [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>), then
@@ -232,7 +232,7 @@ and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=
    <li><p>Return true.
   </ol>
 
- <li><p>If |name|'s first [=code point=] is not U+003A (:), U+005F (_), or in the range U+0080
+ <li><p>If |name|'s 0th [=code point=] is not U+003A (:), U+005F (_), or in the range U+0080
  to U+10FFFF, inclusive, then return false.
 
  <li><p>If |name|'s subsequent [=code points=], if any, are not [=ASCII alphas=], [=ASCII digits=],
