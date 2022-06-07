@@ -211,42 +211,24 @@ added.
 
 <h3 id=name-validation oldids=namespaces>Name validation</h3>
 
-A [=string=] is a <dfn>valid namespace prefix</dfn> if it does not contain [=ASCII whitespace=],
-U+0000 NULL, U+002F (/), or U+003E (>).
+A [=string=] is a <dfn>valid namespace prefix</dfn> if its [=string/length=] is at least 1 and it
+does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
 
-A [=string=] is a <dfn>valid attribute local name</dfn> if it does not contain [=ASCII whitespace=],
-U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
+A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1 and
+it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
 
-A [=string=] is a <dfn>valid element local name</dfn> if it matches the following
-<code>[=ValidElementLocalName=]</code>
-<a href="https://www.w3.org/TR/xml/#sec-notation">EBNF production</a>. The notation used here is as
-defined in <cite>XML</cite>. [[!XML]]
+A [=string=] is a <dfn>valid element local name</dfn> if all of the following conditions hold:
 
-<pre class=lang-ebnf>
-<dfn>ValidElementLocalName</dfn>         ::= <a>HTMLParserCompatibleName</a> | <a>BeyondHTMLParserName</a>
-
-<dfn>HTMLParserCompatibleName</dfn>      ::= [a-zA-Z] [^#x00#x09#x0A#0x0Cx0D#x20/>]*
-
-<dfn>BeyondHTMLParserName</dfn>          ::= <a>BeyondHTMLParserNameStartChar</a> (<a>BeyondHTMLParserNameChar</a>)*
-<dfn>BeyondHTMLParserNameStartChar</dfn> ::= ":" | "_" | [#x80-#x10FFFF]
-<dfn>BeyondHTMLParserNameChar</dfn>      ::= <a>BeyondHTMLParserNameStartChar</a> | [a-zA-Z] | "-" | "." | [0-9]
-</pre>
+* its [=string/length=] is at least 1;
+* its first [=code point=] is an [=ASCII alpha=], U+003A (:), U+005F (_), or in the range U+0080 to
+  U+10FFFF inclusive; and
+* its subsequent [=code points=], if any, are not [=ASCII whitespace=], U+0000 NULL, U+002F (/), or
+  U+003E (>).
 
 <p class="note">This concept is used to validate [=/element=] [=Element/local names=], when
 constructed by DOM APIs. The intention is to allow any name that is possible to construct using the
 HTML parser, plus some additional possibilities. For those additional possibilities, the ASCII range
 is restricted for historical reasons, but beyond ASCII anything is allowed.
-
-<div class="note">
- An equivalent EBNF is the following:
-
- <pre class=lang-ebnf>
- <a>ValidElementLocalName</a>          ::= <a>ValidElementLocalNameStartChar</a> (<a>ValidElementLocalNameChar</a>)*
- <dfn>ValidElementLocalNameStartChar</dfn> ::= [a-zA-Z] | ":" | "_" | [#x80-#x10FFFF]
- <dfn>ValidElementLocalNameChar</dfn>      ::= [^#x00#x09#x0A#0x0Cx0D#x20/>]
- </pre>
-</div>
-
 
 <p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
 <var>context</var>:
