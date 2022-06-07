@@ -217,20 +217,45 @@ does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>).
 <p>A [=string=] is a <dfn>valid attribute local name</dfn> if its [=string/length=] is at least 1
 and it does not contain [=ASCII whitespace=], U+0000 NULL, U+002F (/), U+003D (=), or U+003E (>).
 
-<p>A [=string=] is a <dfn>valid element local name</dfn> if all of the following conditions hold:
+<p>A [=string=] |name| is a <dfn>valid element local name</dfn> if the following steps return true:
 
-<ul class=brief>
- <li>its [=string/length=] is at least 1;
- <li>its first [=code point=] is an [=ASCII alpha=], U+003A (:), U+005F (_), or in the range U+0080
- to U+10FFFF, inclusive; and
- <li>its subsequent [=code points=], if any, are not [=ASCII whitespace=], U+0000 NULL, U+002F (/),
- or U+003E (>).
-</ul>
+<ol>
+ <li><p>If |name|'s [=string/length=] is 0, then return false.
 
-<p class="note">This concept is used to validate [=/element=] [=Element/local names=], when
+ <li>
+  <p>If |name|'s first [=code point=] is an [=ASCII alpha=], then:
+
+  <ol>
+   <li><p>If |name| contains [=ASCII whitespace=], U+0000 NULL, U+002F (/), or U+003E (>), then
+   return false.
+
+   <li><p>Return true.
+  </ol>
+
+ <li><p>If |name|'s first [=code point=] is not U+003A (:), U+005F (_), or in the range U+0080
+ to U+10FFFF, inclusive, then return false.
+
+ <li><p>If |name|'s subsequent [=code points=], if any, are not [=ASCII alphas=], [=ASCII digits=],
+ U+002D (-), U+002E (.), U+003A (:), U+005F (_), or in the range U+0080 to U+10FFFF, inclusive, then
+ return false.
+
+ <li><p>Return true.
+</ol>
+
+<p class=note>This concept is used to validate [=/element=] [=Element/local names=], when
 constructed by DOM APIs. The intention is to allow any name that is possible to construct using the
-HTML parser, plus some additional possibilities. For those additional possibilities, the ASCII range
-is restricted for historical reasons, but beyond ASCII anything is allowed.
+HTML parser (the branch where the first [=code point=] is an [=ASCII alpha=]), plus some additional
+possibilities. For those additional possibilities, the ASCII range is restricted for historical
+reasons, but beyond ASCII anything is allowed.
+
+<div class=note>
+ <p>The following JavaScript-compatible regular expression is an implementation of the above
+ definition:
+
+ <pre class=lang-javascript>
+  /^(?:[A-Za-z][^\0\t\n\f\r\u0020/>]*)|(?:[:_\u0080-][A-Za-z-.:_\u0080-]*)$/u
+ </pre>
+</div>
 
 <p>To <dfn>validate and extract</dfn> a <var>namespace</var> and <var>qualifiedName</var>, given a
 <var>context</var>:
