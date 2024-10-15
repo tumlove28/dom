@@ -2655,6 +2655,7 @@ of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run the
 <p>To <dfn export for=Node id=concept-node-ensure-pre-move-validity>ensure pre-move validity</dfn>
 of a <var>node</var> into a <var>parent</var> before a <var>child</var>, run these steps:
 
+<ol>
  <li><p>If either <var>parent</var> or <var>node</var> are not <a>connected</a>, then
  <a>throw</a> a "{{HierarchyRequestError!!exception}}" {{DOMException}}.</p></li>
 
